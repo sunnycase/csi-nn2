@@ -18,7 +18,7 @@
 #define c_cephes_exp_p5 5.0000001201E-1
 
 #define _RVV_FLOAT16_EXP_OP(LMUL, MLEN)                                                   \
-    static inline vfloat16m##LMUL##_t exp_ps_vfloat16m##LMUL(vfloat16m##LMUL##_t x, word_type vl)         \
+    static inline vfloat16m##LMUL##_t exp_ps_vfloat16m##LMUL(vfloat16m##LMUL##_t x, size_t vl)         \
     {                                                                                     \
         vfloat16m##LMUL##_t tmp, fx;                                                      \
                                                                                           \

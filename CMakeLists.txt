@@ -14,7 +14,7 @@ option(BUILD_CSKY_ELF "build csky elf" OFF)
 if (NOT USE_COMPILER_PATH)
 
 # riscv linux compiler
-if (BUILD_RISCV)
+if (BUILD_RISCV AND NOT CMAKE_C_COMPILER)
     set(CMAKE_C_COMPILER riscv64-unknown-linux-gnu-gcc)
     set(CMAKE_CXX_COMPILER riscv64-unknown-linux-gnu-g++)
     set(CMAKE_ASM_COMPILER riscv64-unknown-linux-gnu-gcc)
@@ -109,62 +109,14 @@ if(BUILD_X86)
 endif()
 
 if(BUILD_RISCV)
-    # build rvv a
-    LIST(APPEND RVV_LST ${NN2_SRCS} ${REF_SRCS} ${GREF_SRCS} ${THEAD_RVV_SRCS})
-    add_library(rvv_static STATIC ${RVV_LST})
-    SET_TARGET_PROPERTIES(rvv_static PROPERTIES OUTPUT_NAME "shl_rvv")
-    set(RVV_BUILD_FLAGS -march=rv64gcv0p7_zfh_xtheadc -mabi=lp64d -DSHL_BUILD_RVV -DSHL_BUILD_REF -DSHL_BUILD_GREF)
-    target_compile_options(rvv_static PRIVATE ${RVV_BUILD_FLAGS})
-
-    install(TARGETS rvv_static DESTINATION lib)
-
-    # build c906 a
-    LIST(APPEND C906_LST ${NN2_SRCS} ${REF_SRCS} ${GREF_SRCS} ${THEAD_RVV_SRCS} ${C906_SRCS})
-    add_library(c906_static STATIC ${C906_LST})
-    SET_TARGET_PROPERTIES(c906_static PROPERTIES OUTPUT_NAME "shl_c906")
-    set(C906_BUILD_FLAGS -march=rv64gcv0p7_zfh_xtheadc -mabi=lp64d -DSHL_BUILD_C906 -DSHL_BUILD_REF -DSHL_BUILD_GREF -DSHL_BUILD_RVV)
-    target_compile_options(c906_static PRIVATE ${C906_BUILD_FLAGS})
-
-    install(TARGETS c906_static DESTINATION lib)
-
-    add_library(c906_share SHARED ${C906_LST})
-    SET_TARGET_PROPERTIES(c906_share PROPERTIES OUTPUT_NAME "shl_c906")
-    target_compile_options(c906_share PRIVATE ${C906_BUILD_FLAGS})
-
-    install(TARGETS c906_share DESTINATION lib)
-
     # build c908 a
-    LIST(APPEND C908_LST ${NN2_SRCS} ${REF_SRCS} ${GREF_SRCS} ${THEAD_RVV_SRCS} ${C908_SRCS})
+    LIST(APPEND C908_LST ${NN2_SRCS} ${REF_SRCS} ${GREF_SRCS} ${THEAD_RVV_SRCS})
     add_library(c908_static STATIC ${C908_LST})
     SET_TARGET_PROPERTIES(c908_static PROPERTIES OUTPUT_NAME "shl_c908")
-    set(C908_BUILD_FLAGS -march=rv64gcv_zfh_xtheadc_xtheadv -mabi=lp64d -DSHL_BUILD_C908 -DSHL_BUILD_REF -DSHL_BUILD_GREF -DSHL_BUILD_RVV)
+    set(C908_BUILD_FLAGS -march=rv64gcv_zfh -mabi=lp64d -DSHL_BUILD_REF -DSHL_BUILD_GREF -DSHL_BUILD_RVV)
     target_compile_options(c908_static PRIVATE ${C908_BUILD_FLAGS})
 
     install(TARGETS c908_static DESTINATION lib)
-
-    # build pnna so
-    LIST(APPEND PNNA_LST ${NN2_SRCS} ${REF_SRCS} ${PNNA_SRCS})
-    add_library(pnna_share SHARED ${PNNA_LST})
-    SET_TARGET_PROPERTIES(pnna_share PROPERTIES OUTPUT_NAME "shl_pnna")
-    set(PNNA_BUILD_FLAGS -DSHL_BUILD_PNNA)
-    target_compile_options(pnna_share PRIVATE ${PNNA_BUILD_FLAGS})
-    target_include_directories(pnna_share PRIVATE module/nna_ddk_install/include/)
-    set(PNNA_LINK_DIR ${CMAKE_CURRENT_SOURCE_DIR}/module/nna_ddk_install/light/)
-    target_link_libraries(pnna_share PRIVATE -L${PNNA_LINK_DIR} -limgdnn -lnnasession)
-
-    install(TARGETS pnna_share DESTINATION lib)
-
-    # build heterogeneous pnna so
-    LIST(APPEND HLIGHT_LST ${NN2_SRCS} ${REF_SRCS} ${GREF_SRCS} ${PNNA_SRCS})
-    add_library(hlight_share SHARED ${HLIGHT_LST})
-    SET_TARGET_PROPERTIES(hlight_share PROPERTIES OUTPUT_NAME "shl_hlight")
-    set(HLIGHT_BUILD_FLAGS -DSHL_BUILD_REF -DSHL_BUILD_GREF -DSHL_BUILD_PNNA)
-    target_compile_options(hlight_share PRIVATE ${HLIGHT_BUILD_FLAGS})
-    target_include_directories(hlight_share PRIVATE module/nna_ddk_install/include/)
-    set(PNNA_LINK_DIR ${CMAKE_CURRENT_SOURCE_DIR}/module/nna_ddk_install/light/)
-    target_link_libraries(hlight_share PRIVATE -L${PNNA_LINK_DIR} -limgdnn -lnnasession)
-
-    install(TARGETS hlight_share DESTINATION lib)
 endif()
 
 if(BUILD_RISCV_ELF)
