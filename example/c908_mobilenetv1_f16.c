@@ -24,7 +24,7 @@ void *csinn_(char *params_base)
 {
     struct csinn_session *sess = csinn_alloc_session();
     sess->base_run_mode = CSINN_RM_CPU_GRAPH;
-    sess->base_api = CSINN_C906;
+    sess->base_api = CSINN_C908;
     sess->base_dtype = CSINN_DTYPE_FLOAT16;
     csinn_session_init(sess);
     csinn_set_input_number(1, sess);
